@@ -28,11 +28,12 @@ func main() {
 		Handler: router,
 	}
 
+	fmt.Println("server started")
+
 	err := server.ListenAndServe()
 
 	if err != nil {
 		log.Fatal("Failed to start server")
 	}
 
-	fmt.Println("server started")
 }
