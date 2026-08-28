@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/GoLang/APIs/internal/config"
+	"github.com/GoLang/APIs/internal/http/handlers/apis"
 )
 
 func main() {
@@ -24,9 +25,8 @@ func main() {
 	//database setup
 	// setup router
 	router := http.NewServeMux()
-	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("welcome to go lang apis"))
-	})
+	router.HandleFunc("GET /apis/sample", apis.New())
+
 	// set up server
 
 	server := http.Server{
