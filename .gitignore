@@ -1,5 +1,5 @@
 .env
 .out
 .exe
-storage
-config
+/storage
+/config
