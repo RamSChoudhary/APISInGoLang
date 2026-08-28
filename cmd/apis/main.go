@@ -1,9 +1,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/GoLang/APIs/internal/config"
 )
@@ -30,10 +36,30 @@ func main() {
 
 	fmt.Println("server started")
 
-	err := server.ListenAndServe()
+	done := make(chan os.Signal, 1)
+
+	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		err := server.ListenAndServe()
+		if err != nil {
+			log.Fatal("Failed to start server")
+		}
+	}()
+
+	<-done
+
+	slog.Info("shutting down server")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+
+	defer cancel()
+
+	err := server.Shutdown(ctx)
 
 	if err != nil {
-		log.Fatal("Failed to start server")
+		slog.Error("failed to shutdown server", slog.String("error", err.Error()))
 	}
 
+	slog.Info("server shoutdown successfully")
 }
